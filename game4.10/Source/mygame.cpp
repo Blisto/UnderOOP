@@ -64,7 +64,7 @@ namespace game_framework {
 // 這個class為遊戲的遊戲開頭畫面物件
 /////////////////////////////////////////////////////////////////////////////
 
-	//練習用class
+	//練習 4：將圖片的貼圖和移動等動作，製作成一個「物件」
 	Cpratice::Cpratice() 
 	{
 		x = y = 0;
@@ -88,8 +88,127 @@ namespace game_framework {
 	{
 		pic.LoadBitmap(IDB_map);
 	}
-
 	//
+
+	//練習 5：利用陣列建立一個遊戲地圖的類別
+	CGameMap::CGameMap():X(30),Y(30),MW(130),MH(130)
+	{
+		int map_init[4][5] = {
+			{ 1,2,1,2,1 },
+			{ 2,1,2,1,2 },
+			{ 1,2,1,2,1 },
+			{ 2,1,2,1,2 }
+		};
+
+		for (int i = 0; i < 4; i++) 
+		{
+			for (int j = 0; j < 5; j++)
+			{
+				map[i][j] = map_init[i][j];
+			}
+		}
+		random_num = 0;
+		bballs = NULL;
+	}
+	void CGameMap::LoadBitmap() 
+	{
+		blue.LoadBitmap(ID_BLUE);
+		green.LoadBitmap(ID_GREEN);
+	}
+	void CGameMap::OnShow()
+	{
+		for (int i = 0; i < 5; i++) 
+			for (int j = 0; j < 4; j++) 
+			{
+				if (map[j][i] != 0) {
+					switch (map[j][i]) 
+					{
+					case 1:
+						blue.SetTopLeft(X+(MW*i),Y+(MH*j) );
+						blue.ShowBitmap();
+						break;
+					case 2:
+						green.SetTopLeft(X + (MW*i), Y + (MH*j));
+						green.ShowBitmap();
+						break;
+					default:
+						ASSERT(0);
+					}
+				}
+			}
+		for (int i = 0; i < random_num; i++) 
+		{
+			bballs[i].OnShow();
+		}
+	}
+	//練習6
+	void CBouncingBall::SetXY(int x, int y) 
+	{
+		this->x=x;
+		this->y=y;
+	}
+	void CBouncingBall::SetFloor(int floor) 
+	{
+		this->floor = floor;
+	}
+	void CBouncingBall::SetVelocity(int velociity)
+	{
+		this->velocity = velociity;
+		this->initial_velocity = velociity;
+	}
+
+	void CGameMap::InitialzeBouncingBall(int ini_index,int row,int col)
+	{
+		const int VELOCITY = 10;
+		const int BALL_PIC_HEIGHT = 15;
+		int floor = Y + (row + 1)*MH - BALL_PIC_HEIGHT;
+
+		bballs[ini_index].LoadBitmap();
+		bballs[ini_index].SetFloor(floor);
+		bballs[ini_index].SetVelocity(VELOCITY + col);
+		bballs[ini_index].SetXY(X + col*MH + MW / 2, floor);
+	}
+	void CGameMap::RandomBouncingBall()
+	{
+		const int MAX_RAND_NUM = 10;
+		random_num = (rand() % MAX_RAND_NUM) + 1;
+		
+		delete[]bballs;
+		bballs = new CBouncingBall[random_num];
+		int ini_index=0;
+		for (int row = 0; row < 4; row++) 
+		{
+			for (int col = 0; col < 5; col++) 
+			{
+				if (map[row][col] != 0 && ini_index < random_num) 
+				{
+					InitialzeBouncingBall(ini_index, row, col);
+					ini_index++;
+				}
+			}
+		}
+	}
+	void CGameMap::OnKeyDown(UINT nChar) 
+	{
+		const int KEY_SPACE = 0x20;
+		if (nChar == KEY_SPACE) 
+		{
+			RandomBouncingBall();
+		}
+	}
+	void CGameMap::OnMove()
+	{
+		for (int i = 0; i < random_num; i++)
+		{
+			bballs[i].OnMove();
+		}
+	}
+	CGameMap::~CGameMap() 
+	{
+		delete []bballs;
+	}
+	//
+
 
 
 CGameStateInit::CGameStateInit(CGame *g)
@@ -300,11 +419,13 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 	//
 	bball.OnMove();
 
+	gamemap.OnMove();//練習6
 }
 
 void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 {
 	c_pratice.LoadBitmap();
+	gamemap.LoadBitmap();
 	//
 	// 當圖很多時，OnInit載入所有的圖要花很多時間。為避免玩遊戲的人
 	//     等的不耐煩，遊戲會出現「Loading ...」，顯示Loading的進度。
@@ -353,6 +474,8 @@ void CGameStateRun::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		eraser.SetMovingUp(true);
 	if (nChar == KEY_DOWN)
 		eraser.SetMovingDown(true);
+
+	gamemap.OnKeyDown(nChar);
 }
 
 void CGameStateRun::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
@@ -409,6 +532,7 @@ void CGameStateRun::OnShow()
 	background.ShowBitmap();			// 貼上背景圖
 	help.ShowBitmap();					// 貼上說明圖
 	hits_left.ShowBitmap();
+	
 	for (int i=0; i < NUMBALLS; i++)
 		ball[i].OnShow();				// 貼上第i號球
 	bball.OnShow();						// 貼上彈跳的球
@@ -420,7 +544,10 @@ void CGameStateRun::OnShow()
 	corner.ShowBitmap();
 	corner.SetTopLeft(SIZE_X-corner.Width(), SIZE_Y-corner.Height());
 	corner.ShowBitmap();
-	//c_pratice.OnShow();
+	//c_pratice.OnShow();// 練習4
+	
+	//練習5or6
+	gamemap.OnShow();
 
 }
 }

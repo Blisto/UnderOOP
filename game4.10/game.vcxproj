@@ -337,6 +337,8 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
+    <Image Include="Bitmaps\blue.bmp" />
+    <Image Include="Bitmaps\green.bmp" />
     <Image Include="Bitmaps\testMap1.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

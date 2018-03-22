@@ -54,8 +54,7 @@ namespace game_framework {
 	};
 
 
-	//絤策ノclass
-
+	//絤策 4盢瓜禟瓜㎝簿笆单笆籹Θン
 	class Cpratice
 	{
 	public:
@@ -67,6 +66,7 @@ namespace game_framework {
 		CMovingBitmap pic;
 		int x, y;
 	};
+	//
 
 	//
 	/////////////////////////////////////////////////////////////////////////////
@@ -92,6 +92,28 @@ namespace game_framework {
 	// –Member functionImplementation常璶来
 	/////////////////////////////////////////////////////////////////////////////
 
+	//絤策 5ノ皚ミ笴栏瓜摸
+	class CGameMap
+	{
+	public:
+		CGameMap();
+		void LoadBitmap();
+		void OnShow();
+		void OnMove();  //絤策6
+		void OnKeyDown(UINT);
+		void RandomBouncingBall();
+		void InitialzeBouncingBall(int, int, int);
+		~CGameMap();
+	protected:
+		CMovingBitmap blue, green;
+		int map[4][5];
+		const int X, Y;
+		const int MW, MH;
+		CBouncingBall *bballs;//絤策6
+		int random_num;
+	};
+	//
+
 	class CGameStateRun : public CGameState {
 	public:
 		CGameStateRun(CGame *g);
@@ -111,6 +133,7 @@ namespace game_framework {
 	private:
 		//
 		Cpratice c_pratice;
+		CGameMap gamemap;
 		//
 		const int		NUMBALLS;	// 瞴羆计
 		CMovingBitmap	background;	// 璉春瓜
