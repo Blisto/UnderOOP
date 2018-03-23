@@ -64,7 +64,10 @@ namespace game_framework {
 // 這個class為遊戲的遊戲開頭畫面物件
 /////////////////////////////////////////////////////////////////////////////
 
-	//練習 4：將圖片的貼圖和移動等動作，製作成一個「物件」
+
+/////////////////////////////////////////////////////////////////////////////
+//練習 4：將圖片的貼圖和移動等動作，製作成一個「物件」
+/////////////////////////////////////////////////////////////////////////////
 	Cpratice::Cpratice() 
 	{
 		x = y = 0;
@@ -88,10 +91,10 @@ namespace game_framework {
 	{
 		pic.LoadBitmap(IDB_map);
 	}
-	//
-
-	//練習 5：利用陣列建立一個遊戲地圖的類別
-	CGameMap::CGameMap():X(30),Y(30),MW(130),MH(130)
+/////////////////////////////////////////////////////////////////////////////
+//練習 5：利用陣列建立一個遊戲地圖的類別
+/////////////////////////////////////////////////////////////////////////////
+	CGameMapp::CGameMapp():X(30),Y(30),MW(130),MH(130)
 	{
 		int map_init[4][5] = {
 			{ 1,2,1,2,1 },
@@ -110,12 +113,12 @@ namespace game_framework {
 		random_num = 0;
 		bballs = NULL;
 	}
-	void CGameMap::LoadBitmap() 
+	void CGameMapp::LoadBitmap() 
 	{
 		blue.LoadBitmap(ID_BLUE);
 		green.LoadBitmap(ID_GREEN);
 	}
-	void CGameMap::OnShow()
+	void CGameMapp::OnShow()
 	{
 		for (int i = 0; i < 5; i++) 
 			for (int j = 0; j < 4; j++) 
@@ -141,7 +144,9 @@ namespace game_framework {
 			bballs[i].OnShow();
 		}
 	}
-	//練習6
+/////////////////////////////////////////////////////////////////////////////
+//練習6
+/////////////////////////////////////////////////////////////////////////////
 	void CBouncingBall::SetXY(int x, int y) 
 	{
 		this->x=x;
@@ -157,7 +162,7 @@ namespace game_framework {
 		this->initial_velocity = velociity;
 	}
 
-	void CGameMap::InitialzeBouncingBall(int ini_index,int row,int col)
+	void CGameMapp::InitialzeBouncingBall(int ini_index,int row,int col)
 	{
 		const int VELOCITY = 10;
 		const int BALL_PIC_HEIGHT = 15;
@@ -168,7 +173,7 @@ namespace game_framework {
 		bballs[ini_index].SetVelocity(VELOCITY + col);
 		bballs[ini_index].SetXY(X + col*MH + MW / 2, floor);
 	}
-	void CGameMap::RandomBouncingBall()
+	void CGameMapp::RandomBouncingBall()
 	{
 		const int MAX_RAND_NUM = 10;
 		random_num = (rand() % MAX_RAND_NUM) + 1;
@@ -188,7 +193,7 @@ namespace game_framework {
 			}
 		}
 	}
-	void CGameMap::OnKeyDown(UINT nChar) 
+	void CGameMapp::OnKeyDown(UINT nChar) 
 	{
 		const int KEY_SPACE = 0x20;
 		if (nChar == KEY_SPACE) 
@@ -196,20 +201,109 @@ namespace game_framework {
 			RandomBouncingBall();
 		}
 	}
-	void CGameMap::OnMove()
+	void CGameMapp::OnMove()
 	{
 		for (int i = 0; i < random_num; i++)
 		{
 			bballs[i].OnMove();
 		}
 	}
-	CGameMap::~CGameMap() 
+	CGameMapp::~CGameMapp() 
 	{
 		delete []bballs;
 	}
-	//
+/////////////////////////////////////////////////////////////////////////////
+/////////////////  Tutorial內容
+/////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////////////
+// ________________________UnderOOP__________________________________________
+/////////////////////////////////////////////////////////////////////////////
+
+	CGameMap::CGameMap() 
+	{
+		nowMap_num = 1;
+	}
+	
+	void CGameMap::LoadBitmap() 
+	{
+		cursor.LoadBitmap(IDB_C);
+		NowMap[0].LoadBitmap(IDB_map);
+		NowMap[1].LoadBitmap(IDB_MAP001);
+		NowMap[2].LoadBitmap(IDB_MAP002);
+	}
+
+	void CGameMap::OnMove() 
+	{
+		
+	}
+
+	void CGameMap::OnShow() 
+	{
+		NowMap[nowMap_num].SetTopLeft(140, 64);
+		NowMap[nowMap_num].ShowBitmap();
+	}
 
 
+
+
+	CGameCharacter::CGameCharacter(string _name,int C_NUM)
+	{
+		this->name =_name;
+		this->c_num = C_NUM;
+		isMovingDown = isMovingUp = isMovingLeft = isMovingRight = false;
+		x = y = 0;
+	}
+	void CGameCharacter::LoadBitmap() 
+	{
+		characterBMP[1].LoadBitmap(IDB_CHARACTER001,RGB(255,255,255));
+	}
+	void CGameCharacter::OnMove() 
+	{
+		const int STEP_SIZE = 5;
+
+		if (isMovingLeft)
+			x -= STEP_SIZE;
+		if (isMovingRight)
+			x += STEP_SIZE;
+		if (isMovingUp)
+			y -= STEP_SIZE;
+		if (isMovingDown)
+			y += STEP_SIZE;
+	}
+	void CGameCharacter::SetMovingUp(bool flag)
+	{
+		isMovingUp = flag;
+	}
+	void CGameCharacter::SetMovingDown(bool flag)
+	{
+		isMovingDown = flag;
+	}
+	void CGameCharacter::SetMovingLeft(bool flag)
+	{
+		isMovingLeft = flag;
+	}
+	void CGameCharacter::SetMovingRight(bool flag)
+	{
+		isMovingRight = flag;
+	}
+	void CGameCharacter::SetXY(int nx, int ny)
+	{
+		x = nx; y = ny;
+	}
+	void CGameCharacter::OnShow() 
+	{
+		characterBMP[c_num].SetTopLeft((SIZE_X/2)-(characterBMP[c_num].Width()/2)+x, (SIZE_Y/2)-(characterBMP[c_num].Height()/2)+y);
+		characterBMP[c_num].ShowBitmap();
+	}
+	CGameCharacter::~CGameCharacter()
+	{
+	}
+
+
+/////////////////////////////////////////////////////////////////////////////
+// ________________________UnderOOP__________________________________________
+/////////////////////////////////////////////////////////////////////////////
 
 CGameStateInit::CGameStateInit(CGame *g)
 : CGameState(g)
@@ -340,11 +434,13 @@ CGameStateRun::CGameStateRun(CGame *g)
 : CGameState(g), NUMBALLS(28)
 {
 	ball = new CBall [NUMBALLS];
+	frisk = new CGameCharacter("frisk",1);
 }
 
 CGameStateRun::~CGameStateRun()
 {
 	delete [] ball;
+	delete frisk;
 }
 
 void CGameStateRun::OnBeginState()
@@ -384,6 +480,7 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 	//
 	// 移動背景圖的座標
 	//
+	/*
 	if (background.Top() > SIZE_Y)
 		background.SetTopLeft(60 ,-background.Height());
 	background.SetTopLeft(background.Left(),background.Top()+1);
@@ -418,14 +515,15 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 	// 移動彈跳的球
 	//
 	bball.OnMove();
+	*/
 
-	gamemap.OnMove();//練習6
+	frisk->OnMove();
 }
 
 void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 {
-	c_pratice.LoadBitmap();
-	gamemap.LoadBitmap();
+	map.LoadBitmap();
+	frisk->LoadBitmap();
 	//
 	// 當圖很多時，OnInit載入所有的圖要花很多時間。為避免玩遊戲的人
 	//     等的不耐煩，遊戲會出現「Loading ...」，顯示Loading的進度。
@@ -467,15 +565,18 @@ void CGameStateRun::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	const char KEY_RIGHT = 0x27; // keyboard右箭頭
 	const char KEY_DOWN  = 0x28; // keyboard下箭頭
 	if (nChar == KEY_LEFT)
-		eraser.SetMovingLeft(true);
+		frisk->SetMovingLeft(true);
+		//eraser.SetMovingLeft(true);
 	if (nChar == KEY_RIGHT)
-		eraser.SetMovingRight(true);
+		frisk->SetMovingRight(true);
+		//eraser.SetMovingRight(true);
 	if (nChar == KEY_UP)
-		eraser.SetMovingUp(true);
+		frisk->SetMovingUp(true);
+		//eraser.SetMovingUp(true);
 	if (nChar == KEY_DOWN)
-		eraser.SetMovingDown(true);
+		frisk->SetMovingDown(true);
+		//eraser.SetMovingDown(true);
 
-	gamemap.OnKeyDown(nChar);
 }
 
 void CGameStateRun::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
@@ -485,13 +586,17 @@ void CGameStateRun::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 	const char KEY_RIGHT = 0x27; // keyboard右箭頭
 	const char KEY_DOWN  = 0x28; // keyboard下箭頭
 	if (nChar == KEY_LEFT)
-		eraser.SetMovingLeft(false);
+		frisk->SetMovingLeft(false);
+		//eraser.SetMovingLeft(false);
 	if (nChar == KEY_RIGHT)
-		eraser.SetMovingRight(false);
+		frisk->SetMovingRight(false);
+		//eraser.SetMovingRight(false);
 	if (nChar == KEY_UP)
-		eraser.SetMovingUp(false);
+		frisk->SetMovingUp(false);
+		//eraser.SetMovingUp(false);
 	if (nChar == KEY_DOWN)
-		eraser.SetMovingDown(false);
+		frisk->SetMovingDown(false);
+		//eraser.SetMovingDown(false);
 }
 
 void CGameStateRun::OnLButtonDown(UINT nFlags, CPoint point)  // 處理滑鼠的動作
@@ -521,6 +626,7 @@ void CGameStateRun::OnRButtonUp(UINT nFlags, CPoint point)	// 處理滑鼠的動作
 
 void CGameStateRun::OnShow()
 {
+	map.OnShow();
 	//
 	//  注意：Show裡面千萬不要移動任何物件的座標，移動座標的工作應由Move做才對，
 	//        否則當視窗重新繪圖時(OnDraw)，物件就會移動，看起來會很怪。換個術語
@@ -529,25 +635,50 @@ void CGameStateRun::OnShow()
 	//
 	//  貼上背景圖、撞擊數、球、擦子、彈跳的球
 	//
-	background.ShowBitmap();			// 貼上背景圖
+
+
+	//background.ShowBitmap();			// 貼上背景圖
 	help.ShowBitmap();					// 貼上說明圖
-	hits_left.ShowBitmap();
+	//hits_left.ShowBitmap();
 	
+
+	/*
 	for (int i=0; i < NUMBALLS; i++)
 		ball[i].OnShow();				// 貼上第i號球
 	bball.OnShow();						// 貼上彈跳的球
 	eraser.OnShow();					// 貼上擦子
+	*/
+
+
 	//
 	//  貼上左上及右下角落的圖
 	//
-	corner.SetTopLeft(0,0);
-	corner.ShowBitmap();
-	corner.SetTopLeft(SIZE_X-corner.Width(), SIZE_Y-corner.Height());
-	corner.ShowBitmap();
-	//c_pratice.OnShow();// 練習4
+	//corner.SetTopLeft(0,0);
+	//corner.ShowBitmap();
+	//corner.SetTopLeft(SIZE_X-corner.Width(), SIZE_Y-corner.Height());
+	//corner.ShowBitmap();
 	
+	
+	//c_pratice.OnShow();// 練習4
 	//練習5or6
-	gamemap.OnShow();
+	//gamemap.OnShow();
+
+
+/////////////////////////////////////////////////////////////////////////////
+// ________________________UnderOOP__________________________________________
+/////////////////////////////////////////////////////////////////////////////
+
+	
+
+	frisk->OnShow();
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+// ________________________UnderOOP__________________________________________
+/////////////////////////////////////////////////////////////////////////////
+
 
 }
 }

@@ -110,6 +110,14 @@ ID_BLUE                 BITMAP                  "C:\\Users\\User\\Desktop\\Under
 
 ID_GREEN                BITMAP                  "C:\\Users\\User\\Desktop\\Undertale-UnderOOP-\\game4.10\\Bitmaps\\green.bmp"
 
+IDB_MAP001              BITMAP                  "C:\\Users\\User\\Desktop\\Undertale-UnderOOP-\\game4.10\\Bitmaps\\001.bmp"
+
+IDB_MAP002              BITMAP                  "C:\\Users\\User\\Desktop\\Undertale-UnderOOP-\\game4.10\\Bitmaps\\002.bmp"
+
+IDB_C                   BITMAP                  "C:\\Users\\User\\Desktop\\Undertale-UnderOOP-\\game4.10\\Bitmaps\\testCursor.bmp"
+
+IDB_CHARACTER001        BITMAP                  "C:\\Users\\User\\Desktop\\Undertale-UnderOOP-\\game4.10\\Bitmaps\\frisk.bmp"
+
 
 /////////////////////////////////////////////////////////////////////////////
 //

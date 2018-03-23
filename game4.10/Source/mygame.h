@@ -41,6 +41,7 @@
 #include "CEraser.h"
 #include "CBall.h"
 #include "CBouncingBall.h"
+#include<string.h>
 
 namespace game_framework {
 	/////////////////////////////////////////////////////////////////////////////
@@ -93,17 +94,17 @@ namespace game_framework {
 	/////////////////////////////////////////////////////////////////////////////
 
 	//練習 5：利用陣列建立一個遊戲地圖的類別
-	class CGameMap
+	class CGameMapp
 	{
 	public:
-		CGameMap();
+		CGameMapp();
 		void LoadBitmap();
 		void OnShow();
 		void OnMove();  //練習6
 		void OnKeyDown(UINT);
 		void RandomBouncingBall();
 		void InitialzeBouncingBall(int, int, int);
-		~CGameMap();
+		~CGameMapp();
 	protected:
 		CMovingBitmap blue, green;
 		int map[4][5];
@@ -113,6 +114,47 @@ namespace game_framework {
 		int random_num;
 	};
 	//
+
+	//
+	class CGameCharacter 
+	{
+	public:
+		CGameCharacter(string _name,int C_NUM);
+		void LoadBitmap();
+		void OnMove();					// 移動角色
+		void SetMovingUp(bool flag);	// 設定是否正在往上移動
+		void SetMovingDown(bool flag);	// 設定是否正在往下移動
+		void SetMovingLeft(bool flag);	// 設定是否正在往左移動
+		void SetMovingRight(bool flag); // 設定是否正在往右移動
+		void SetXY(int nx, int ny);		// 設定擦子左上角座標
+		void OnShow();
+		~CGameCharacter();
+	private:
+		string name;
+		CMovingBitmap characterBMP[10];
+		int x, y, c_num;					// 角色左上角座標
+		bool isMovingDown;			// 是否正在往下移動
+		bool isMovingLeft;			// 是否正在往左移動
+		bool isMovingRight;			// 是否正在往右移動
+		bool isMovingUp;			// 是否正在往上移動
+	};
+	//
+
+	//負責處理遊戲地圖的class
+	class CGameMap
+	{
+	public:
+		CGameMap();
+		void LoadBitmap();
+		void OnShow();
+		void OnMove();
+	private:
+		CMovingBitmap NowMap[10];
+		CMovingBitmap cursor;
+		int nowMap_num;
+	};
+	//
+
 
 	class CGameStateRun : public CGameState {
 	public:
@@ -131,10 +173,14 @@ namespace game_framework {
 		void OnMove();									// 移動遊戲元素
 		void OnShow();									// 顯示這個狀態的遊戲畫面
 	private:
-		//
+		///////////////////////////
 		Cpratice c_pratice;
-		CGameMap gamemap;
-		//
+		CGameMapp gamemap;
+		///////////////////////////
+
+		CGameMap map;
+		CGameCharacter *frisk;
+
 		const int		NUMBALLS;	// 球的總數
 		CMovingBitmap	background;	// 背景圖
 		CMovingBitmap	help;		// 說明圖

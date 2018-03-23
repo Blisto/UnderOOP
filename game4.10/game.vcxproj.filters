@@ -117,9 +117,6 @@
     <ClCompile Include="Source\StdAfx.cpp">
       <Filter>MFC</Filter>
     </ClCompile>
-    <ClCompile Include="Source\mygame.cpp">
-      <Filter>MyGame</Filter>
-    </ClCompile>
     <ClCompile Include="Source\CBall.cpp">
       <Filter>MyGame</Filter>
     </ClCompile>
@@ -127,6 +124,9 @@
       <Filter>MyGame</Filter>
     </ClCompile>
     <ClCompile Include="Source\CEraser.cpp">
+      <Filter>MyGame</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\mygame.cpp">
       <Filter>MyGame</Filter>
     </ClCompile>
   </ItemGroup>
@@ -181,6 +181,18 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="Bitmaps\green.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Bitmaps\001.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Bitmaps\002.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Bitmaps\testCursor.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Bitmaps\frisk.bmp">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
