@@ -223,11 +223,13 @@ namespace game_framework {
 	CGameMap::CGameMap() 
 	{
 		nowMap_num = 1;
+		isMovingDown = isMovingUp = isMovingLeft = isMovingRight = false;
+		x = 140;
+		y = 64;
 	}
 	
 	void CGameMap::LoadBitmap() 
 	{
-		cursor.LoadBitmap(IDB_C);
 		NowMap[0].LoadBitmap(IDB_map);
 		NowMap[1].LoadBitmap(IDB_MAP001);
 		NowMap[2].LoadBitmap(IDB_MAP002);
@@ -235,12 +237,40 @@ namespace game_framework {
 
 	void CGameMap::OnMove() 
 	{
-		
-	}
+		const int STEP_SIZE = 5;
 
+		if (isMovingLeft)
+			x -= STEP_SIZE;
+		if (isMovingRight)
+			x += STEP_SIZE;
+		if (isMovingUp)
+			y -= STEP_SIZE;
+		if (isMovingDown)
+			y += STEP_SIZE;
+	}
+	void CGameMap::SetMovingUp(bool flag)
+	{
+		isMovingUp = flag;
+	}
+	void CGameMap::SetMovingDown(bool flag)
+	{
+		isMovingDown = flag;
+	}
+	void CGameMap::SetMovingLeft(bool flag)
+	{
+		isMovingLeft = flag;
+	}
+	void CGameMap::SetMovingRight(bool flag)
+	{
+		isMovingRight = flag;
+	}
+	void CGameMap::SetXY(int nx, int ny)
+	{
+		x = nx; y = ny;
+	}
 	void CGameMap::OnShow() 
 	{
-		NowMap[nowMap_num].SetTopLeft(140, 64);
+		NowMap[nowMap_num].SetTopLeft(x, y);
 		NowMap[nowMap_num].ShowBitmap();
 	}
 
@@ -516,7 +546,7 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 	//
 	bball.OnMove();
 	*/
-
+	map.OnMove();
 	frisk->OnMove();
 }
 
@@ -565,18 +595,21 @@ void CGameStateRun::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	const char KEY_RIGHT = 0x27; // keyboard右箭頭
 	const char KEY_DOWN  = 0x28; // keyboard下箭頭
 	if (nChar == KEY_LEFT)
-		frisk->SetMovingLeft(true);
+		//frisk->SetMovingLeft(true);
 		//eraser.SetMovingLeft(true);
+		map.SetMovingRight(true);
 	if (nChar == KEY_RIGHT)
-		frisk->SetMovingRight(true);
+		//frisk->SetMovingRight(true);
 		//eraser.SetMovingRight(true);
+		map.SetMovingLeft(true);
 	if (nChar == KEY_UP)
-		frisk->SetMovingUp(true);
+		//frisk->SetMovingUp(true);
 		//eraser.SetMovingUp(true);
+		map.SetMovingDown(true);
 	if (nChar == KEY_DOWN)
-		frisk->SetMovingDown(true);
+		//frisk->SetMovingDown(true);
 		//eraser.SetMovingDown(true);
-
+		map.SetMovingUp(true);
 }
 
 void CGameStateRun::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
@@ -586,17 +619,21 @@ void CGameStateRun::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 	const char KEY_RIGHT = 0x27; // keyboard右箭頭
 	const char KEY_DOWN  = 0x28; // keyboard下箭頭
 	if (nChar == KEY_LEFT)
-		frisk->SetMovingLeft(false);
+		//frisk->SetMovingLeft(false);
 		//eraser.SetMovingLeft(false);
+		map.SetMovingRight(false);
 	if (nChar == KEY_RIGHT)
-		frisk->SetMovingRight(false);
+		//frisk->SetMovingRight(false);
 		//eraser.SetMovingRight(false);
+		map.SetMovingLeft(false);
 	if (nChar == KEY_UP)
-		frisk->SetMovingUp(false);
+		//frisk->SetMovingUp(false);
 		//eraser.SetMovingUp(false);
+		map.SetMovingDown(false);
 	if (nChar == KEY_DOWN)
-		frisk->SetMovingDown(false);
+		//frisk->SetMovingDown(false);
 		//eraser.SetMovingDown(false);
+		map.SetMovingUp(false);
 }
 
 void CGameStateRun::OnLButtonDown(UINT nFlags, CPoint point)  // 處理滑鼠的動作

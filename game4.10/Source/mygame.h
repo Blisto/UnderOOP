@@ -146,12 +146,20 @@ namespace game_framework {
 	public:
 		CGameMap();
 		void LoadBitmap();
-		void OnShow();
 		void OnMove();
+		void SetMovingUp(bool flag);	// 設定是否正在往上移動
+		void SetMovingDown(bool flag);	// 設定是否正在往下移動
+		void SetMovingLeft(bool flag);	// 設定是否正在往左移動
+		void SetMovingRight(bool flag); // 設定是否正在往右移動
+		void SetXY(int nx, int ny);		// 設定擦子左上角座標
+		void OnShow();
 	private:
 		CMovingBitmap NowMap[10];
-		CMovingBitmap cursor;
-		int nowMap_num;
+		int x, y, nowMap_num;					// 地圖左上角座標
+		bool isMovingDown;			// 是否正在往下移動
+		bool isMovingLeft;			// 是否正在往左移動
+		bool isMovingRight;			// 是否正在往右移動
+		bool isMovingUp;			// 是否正在往上移動
 	};
 	//
 
