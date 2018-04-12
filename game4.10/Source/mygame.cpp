@@ -89,9 +89,9 @@ namespace game_framework {
 	CGameMap::CGameMap()
 	{
 		xyMode = 0;
-		nowMap_num = 1;
+		nowMap_num = 3;
 		isMovingDown = isMovingUp = isMovingLeft = isMovingRight = false;
-		x = 39;
+		x = 2;
 		y = 0;
 		for (int i = 0; i < 10; i++)
 		{
@@ -131,12 +131,12 @@ namespace game_framework {
 			}
 		}
 
-		for (int i = 0; i <= NowMap[3].Height() / 5&&0; i++)
+		for (int i = 0; i <= NowMap[3].Height() / 5; i++)
 		{
-			for (int j = 0; j <= NowMap[2].Width() / 5; j++)
+			for (int j = 0; j <= NowMap[3].Width() / 5; j++)
 			{
-				if (i >= 33 && i <= 67 && j >= 0 && j <= 63)map[3][i][j] = 1;
-				if (i >= 22 && i <= 32 && j >= 28 && j <= 36)map[3][i][j] = 1;
+				map[3][i][j] = 1;
+
 			}
 		}
 
@@ -150,6 +150,9 @@ namespace game_framework {
 		NowMap[0].LoadBitmap(IDB_MAP000);
 		NowMap[1].LoadBitmap(IDB_MAP001, RGB(255, 255, 255));
 		NowMap[2].LoadBitmap(IDB_MAP002, RGB(255, 255, 255));
+		NowMap[3].LoadBitmap(IDB_MAP003, RGB(255, 255, 255));
+
+
 		this->MapInit();
 	}
 	void CGameMap::SetCharacterMap(CGameCharacter*character) 
@@ -180,10 +183,10 @@ namespace game_framework {
 		int lr=0,ud=0;
 		if (isMovingRight == true)lr = -1;
 		if (isMovingLeft == true)lr = 1;
-		if (isMovingUp == true)ud = -1;
-		if (isMovingDown == true)ud = 1;
+		if (isMovingUp == true)ud = 1;
+		if (isMovingDown == true)ud = -1;
 		if (ud == 0 && cy - my>=0 && cx - mx + lr>=0 && map[nowMap_num][cy - my][cx - mx+lr] == 1&& map[nowMap_num][cy - my+6][cx - mx + lr+4] == 1)return true;
-		//if (lr == 0 && cx - mx>=0 && cy - my + ud>=0 && map[nowMap_num][cy - my + ud][cx - mx] == 1 && map[nowMap_num][cy - my + ud + 6][cx - mx + 4] == 1)return true;
+		if (lr == 0 && cx - mx>=0 && cy - my + ud>=0 && map[nowMap_num][cy - my + ud][cx - mx] == 1 && map[nowMap_num][cy - my + ud + 6][cx - mx + 4] == 1)return true;
 		return false;
 	}
 	void CGameMap::SetMovingUp(bool flag)
@@ -226,7 +229,7 @@ namespace game_framework {
 	}
 	void CGameMap::Mesg(CGameCharacter*character)
 	{
-		TRACE("c.x=%d,c.y=%d; m.x=%d,m.y=%d    TF=%d", character->GetX(), character->GetY(), this->GetX(), this->GetY(), character->MoveStepCheck(this->GetX(), this->GetY()));
+		TRACE("c.x=%d,c.y=%d; m.x=%d,m.y=%d    TF=%d    Portal:cx=%d,cy=%d  mx=%d,my=%d", character->GetX(), character->GetY(), this->GetX(), this->GetY(), character->MoveStepCheck(this->GetX(), this->GetY()), character->GetX() * 5 + 10 - SIZE_X / 2, character->GetY() * 5 + 15 - SIZE_Y / 2, this->GetX() * 5 + NowMap[nowMap_num].Width() / 2 - SIZE_X / 2, this->GetY() * 5 + NowMap[nowMap_num].Height() / 2 - SIZE_Y / 2);
 
 	}
 	void CGameMap::Portal(CGameCharacter*character)
@@ -243,9 +246,21 @@ namespace game_framework {
 			}
 			break;
 		case 2:
-
-
-
+			if (character->GetY() >= 33 && character->GetY() <= 36 && this->GetX() >= 30 && this->GetX() <= 34)
+			{
+				nowMap_num = 3;
+				this->x = 0;
+				this->y = 60;
+				character->SetXY(12, 0);
+				character->SetMapInfo(map[nowMap_num]);
+			}
+			if (character->GetY() >= 74 && character->GetY() <= 75 && this->GetX() >= 29 && this->GetX() <= 32)
+			{
+				nowMap_num = 1;
+				this->x = -55;
+				character->SetXY(0, 4);
+				character->SetMapInfo(map[nowMap_num]);
+			}
 			break;
 		case 3:
 			break;
@@ -303,10 +318,21 @@ namespace game_framework {
 			x -= STEP_SIZE;
 		if (isMovingRight)
 			x += STEP_SIZE;
-		if (isMovingUp)
+		if (isMovingUp && this->GetY() > 5)
+		{
 			y -= STEP_SIZE;
-		if (isMovingDown)
+		}else
+		{
+			if(this->GetY() < 5)y = 5;
+		}
+		if (isMovingDown && this->GetY() < 85)
+		{
 			y += STEP_SIZE;
+		}
+		else 
+		{
+			if (this->GetY() > 85)y = 84;
+		}
 	}
 
 	void CGameCharacter::SetMovingUp(bool flag)
@@ -343,8 +369,8 @@ namespace game_framework {
 	{
 		int cx=this->GetX(), cy = this->GetY();
 		int lr=0,ud = 0;
-		if (isMovingRight == true)lr = -1;
-		if (isMovingLeft == true)lr = 1;
+		if (isMovingRight == true)lr = 0;
+		if (isMovingLeft == true)lr = 0;
 		if (isMovingUp == true)ud = -1;
 		if (isMovingDown == true)ud = 1;
 
@@ -607,13 +633,27 @@ void CGameStateRun::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	}
 	if (nChar == KEY_UP)
 	{
-		//map->SetMovingDown(true);
-		frisk->SetMovingUp(true);
+		//frisk->SetMovingUp(true);
+		if (frisk->GetY() > 6)
+		{
+			frisk->SetMovingUp(true);
+		}
+		else
+		{
+			map->SetMovingDown(true);
+		}
 	}
 	if (nChar == KEY_DOWN)
 	{
-		//map->SetMovingUp(true);
-		frisk->SetMovingDown(true);
+		//frisk->SetMovingDown(true);
+		if (frisk->GetY() < 84)
+		{
+			frisk->SetMovingDown(true);
+		}
+		else 
+		{
+			map->SetMovingUp(true);
+		}
 	}
 }
 
@@ -637,14 +677,14 @@ void CGameStateRun::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 	}
 	if (nChar == KEY_UP)
 	{
-		//map->SetMovingDown(false);
 		frisk->SetMovingUp(false);
+		map->SetMovingDown(false);
 		map->Portal(frisk);
 	}
 	if (nChar == KEY_DOWN)
 	{
-		//map->SetMovingUp(false);
 		frisk->SetMovingDown(false);
+		map->SetMovingUp(false);
 		map->Portal(frisk);
 	}
 }
