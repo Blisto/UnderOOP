@@ -42,6 +42,7 @@
 #include "CBall.h"
 #include "CBouncingBall.h"
 #include<string.h>
+#include "CNonPlayerCharacter.h"
 
 namespace game_framework {
 	/////////////////////////////////////////////////////////////////////////////
@@ -99,6 +100,7 @@ namespace game_framework {
 		~CGameCharacter();
 	private:
 		string name;
+		CAnimation animation;
 		CMovingBitmap characterBMP[10];
 		int map[800][800];          // 角色的地圖系統
 		int x, y, c_num;			// 角色左上角座標
@@ -127,7 +129,6 @@ namespace game_framework {
 		int GetNowMapNum();
 		void SetCharacterMap(CGameCharacter*character);
 		void OnShow();
-		int GetMoveType();
 		void Portal(CGameCharacter*character);
 		void Mesg(CGameCharacter*character);
 	private:
@@ -162,7 +163,7 @@ namespace game_framework {
 	private:
 		CGameMap *map;
 		CGameCharacter *frisk;
-
+		CNonPlayerCharacter *flowey;
 		const int		NUMBALLS;	// 球的總數
 		CMovingBitmap	background;	// 背景圖
 		CMovingBitmap	help;		// 說明圖

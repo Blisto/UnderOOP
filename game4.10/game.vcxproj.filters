@@ -129,6 +129,9 @@
     <ClCompile Include="Source\mygame.cpp">
       <Filter>MyGame</Filter>
     </ClCompile>
+    <ClCompile Include="Source\CNonPlayerCharacter.cpp">
+      <Filter>MyGame</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\audio.h">
@@ -167,6 +170,9 @@
     <ClInclude Include="Source\CEraser.h">
       <Filter>MyGame</Filter>
     </ClInclude>
+    <ClInclude Include="Source\CNonPlayerCharacter.h">
+      <Filter>MyGame</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Source\game.rc">
@@ -199,6 +205,15 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="Bitmaps\000.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Bitmaps\flowey1.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Bitmaps\flowey1.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Bitmaps\flowey2.bmp">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

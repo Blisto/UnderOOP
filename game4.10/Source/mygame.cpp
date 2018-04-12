@@ -89,9 +89,9 @@ namespace game_framework {
 	CGameMap::CGameMap()
 	{
 		xyMode = 0;
-		nowMap_num = 3;
+		nowMap_num = 1;
 		isMovingDown = isMovingUp = isMovingLeft = isMovingRight = false;
-		x = 2;
+		x = 39;
 		y = 0;
 		for (int i = 0; i < 10; i++)
 		{
@@ -126,7 +126,7 @@ namespace game_framework {
 		{
 			for (int j = 0; j <= NowMap[2].Width() / 5; j++)
 			{
-				if (i >= 33 && i <= 67 && j >= 0 && j <= 63)map[2][i][j] = 1;
+				if (i >= 33 && i <= 99 && j >= 0 && j <= 63)map[2][i][j] = 1;
 				if (i >= 22 && i <= 32 && j >= 28 && j <= 36)map[2][i][j] = 1;
 			}
 		}
@@ -136,10 +136,18 @@ namespace game_framework {
 			for (int j = 0; j <= NowMap[3].Width() / 5; j++)
 			{
 				map[3][i][j] = 1;
-
 			}
 		}
-
+		for (int i = 0; i <= NowMap[3].Height() / 5; i++)
+		{
+			for (int j = 0; j <= NowMap[3].Width() / 5; j++)
+			{
+				if (i >= 26 && i <= 37 && j >= 17 && j <= 79)map[3][i][j] = 0;
+				if (i >= 74 && i <= 85 && j >= 0 && j <= 62)map[3][i][j] = 0;
+				if (i >= 105 && i <= 116 && j >= 0 && j <= 37)map[3][i][j] = 0;
+				if (i >= 105 && i <= 116 && j >= 43 && j <= 79)map[3][i][j] = 0;
+			}
+		}
 
 
 
@@ -233,7 +241,8 @@ namespace game_framework {
 
 	}
 	void CGameMap::Portal(CGameCharacter*character)
-	{
+	{//需對應地圖捲動 設置位移量 將傳送點設置在正確位置or使用Map座標判斷
+		int yShift,xShift;
 		switch (nowMap_num)
 		{
 		case 1:
@@ -241,28 +250,40 @@ namespace game_framework {
 			{
 				nowMap_num = 2;
 				this->x = 0;
-				character->SetXY(0, 28);
+				this->y = 0;
+				character->SetXY(0, 37);
 				character->SetMapInfo(map[nowMap_num]);
 			}
 			break;
 		case 2:
-			if (character->GetY() >= 33 && character->GetY() <= 36 && this->GetX() >= 30 && this->GetX() <= 34)
+			yShift = this->y;
+			if (character->GetY() >= 20 + yShift && character->GetY() <= 24 + yShift && this->GetX() >= 30 && this->GetX() <= 34)
 			{
 				nowMap_num = 3;
 				this->x = 0;
-				this->y = 60;
-				character->SetXY(12, 0);
+				this->y = -60;
+				character->SetXY(0, 12);
 				character->SetMapInfo(map[nowMap_num]);
 			}
-			if (character->GetY() >= 74 && character->GetY() <= 75 && this->GetX() >= 29 && this->GetX() <= 32)
+			if (character->GetY() >= 82 + yShift && character->GetY() <= 87 + yShift && this->GetX() >= 29 && this->GetX() <= 34)
 			{
 				nowMap_num = 1;
 				this->x = -55;
+				this->y = 0;
 				character->SetXY(0, 4);
 				character->SetMapInfo(map[nowMap_num]);
 			}
 			break;
 		case 3:
+			yShift = this->y - (-60);
+			if (character->GetY() >= 60+ yShift && character->GetY() <= 63+ yShift && this->GetX() >= 22 && this->GetX() <= 25)
+			{
+				nowMap_num = 2;
+				this->x = 0;
+				this->y = 0;
+				character->SetXY(0, -17);
+				character->SetMapInfo(map[nowMap_num]);
+			}
 			break;
 
 		default:
@@ -271,10 +292,7 @@ namespace game_framework {
 
 
 	}
-	int CGameMap::GetMoveType()
-	{
-		return xyMode;
-	}
+
 
 
 
@@ -526,7 +544,8 @@ CGameStateRun::CGameStateRun(CGame *g)
 : CGameState(g), NUMBALLS(28)
 {
 	ball = new CBall [NUMBALLS];
-	frisk = new CGameCharacter("frisk",1);
+	frisk = new CGameCharacter("Frisk",1);
+	flowey = new CNonPlayerCharacter("Flowey");//NPC:Flowey
 	map = new CGameMap();
 }
 
@@ -534,6 +553,8 @@ CGameStateRun::~CGameStateRun()
 {
 	delete [] ball;
 	delete frisk;
+	delete map;
+	delete flowey;
 }
 
 void CGameStateRun::OnBeginState()
@@ -569,8 +590,9 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 	//
 	// 如果希望修改cursor的樣式，則將下面程式的commment取消即可
 	//
-
+	if (map->GetNowMapNum() != 2)flowey->SetXY(0, 10);
 	map->OnMove(frisk);
+	flowey->OnMove(map->MoveStepCheck(frisk),frisk->MoveStepCheck(map->GetX(), map->GetY()));
 	frisk->OnMove(map->GetX(),map->GetY());
 	
 }
@@ -580,6 +602,7 @@ void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 	map->LoadBitmap();
 	frisk->LoadBitmap();
 	map->SetCharacterMap(frisk);
+	flowey->LoadBitmap();
 	//
 	// 當圖很多時，OnInit載入所有的圖要花很多時間。為避免玩遊戲的人
 	//     等的不耐煩，遊戲會出現「Loading ...」，顯示Loading的進度。
@@ -625,11 +648,13 @@ void CGameStateRun::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	{
 		//frisk->SetMovingLeft(true);
 		map->SetMovingRight(true);//人物Y軸
+		if (map->GetNowMapNum() == 2)flowey->SetMovingRight(true);
 	}
 	if (nChar == KEY_RIGHT)
 	{
 		//frisk->SetMovingRight(true);
 		map->SetMovingLeft(true);//人物Y軸
+		if (map->GetNowMapNum() == 2)flowey->SetMovingLeft(true);
 	}
 	if (nChar == KEY_UP)
 	{
@@ -641,6 +666,7 @@ void CGameStateRun::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		else
 		{
 			map->SetMovingDown(true);
+			if (map->GetNowMapNum() == 2)flowey->SetMovingDown(true);
 		}
 	}
 	if (nChar == KEY_DOWN)
@@ -653,6 +679,7 @@ void CGameStateRun::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		else 
 		{
 			map->SetMovingUp(true);
+			if (map->GetNowMapNum() == 2)flowey->SetMovingUp(true);
 		}
 	}
 }
@@ -667,24 +694,28 @@ void CGameStateRun::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 	{
 		//frisk->SetMovingLeft(false);
 		map->SetMovingRight(false);
+		flowey->SetMovingRight(false);
 		map->Portal(frisk);
 	}
 	if (nChar == KEY_RIGHT)
 	{
 		//frisk->SetMovingRight(false);
 		map->SetMovingLeft(false);
+		flowey->SetMovingLeft(false);
 		map->Portal(frisk);
 	}
 	if (nChar == KEY_UP)
 	{
 		frisk->SetMovingUp(false);
 		map->SetMovingDown(false);
+		flowey->SetMovingDown(false);
 		map->Portal(frisk);
 	}
 	if (nChar == KEY_DOWN)
 	{
 		frisk->SetMovingDown(false);
 		map->SetMovingUp(false);
+		flowey->SetMovingUp(false);
 		map->Portal(frisk);
 	}
 }
@@ -728,7 +759,7 @@ void CGameStateRun::OnShow()
 
 
 	//background.ShowBitmap();			// 貼上背景圖
-	help.ShowBitmap();					// 貼上說明圖
+	//help.ShowBitmap();					// 貼上說明圖
 	//hits_left.ShowBitmap();
 	
 
@@ -740,7 +771,7 @@ void CGameStateRun::OnShow()
 
 	map->Mesg(frisk);
 	frisk->OnShow();
-	
+	flowey->OnShow((map->GetNowMapNum()));
 
 
 
