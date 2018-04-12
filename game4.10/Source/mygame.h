@@ -54,21 +54,6 @@ namespace game_framework {
 		AUDIO_NTUT				// 2
 	};
 
-
-	//練習 4：將圖片的貼圖和移動等動作，製作成一個「物件」
-	class Cpratice
-	{
-	public:
-		Cpratice();
-		void LoadBitmap();
-		void OnMove();
-		void OnShow();
-	private:
-		CMovingBitmap pic;
-		int x, y;
-	};
-	//
-
 	//
 	/////////////////////////////////////////////////////////////////////////////
 	// 這個class為遊戲的遊戲開頭畫面物件
@@ -93,50 +78,29 @@ namespace game_framework {
 	// 每個Member function的Implementation都要弄懂
 	/////////////////////////////////////////////////////////////////////////////
 
-	//練習 5：利用陣列建立一個遊戲地圖的類別
-	class CGameMapp
-	{
-	public:
-		CGameMapp();
-		void LoadBitmap();
-		void OnShow();
-		void OnMove();  //練習6
-		void OnKeyDown(UINT);
-		void RandomBouncingBall();
-		void InitialzeBouncingBall(int, int, int);
-		~CGameMapp();
-	protected:
-		CMovingBitmap blue, green;
-		int map[4][5];
-		const int X, Y;
-		const int MW, MH;
-		CBouncingBall *bballs;//練習6
-		int random_num;
-	};
-	//
-
 	//
 	class CGameCharacter 
 	{
 	public:
 		CGameCharacter(string _name,int C_NUM);
 		void LoadBitmap();
-		void OnMove(int mx, int my);					// 移動角色
+		void SetMapInfo(int mapInfo[800][800]);
+		void OnMove(int mx, int my);	// 移動角色
 		void SetMovingUp(bool flag);	// 設定是否正在往上移動
 		void SetMovingDown(bool flag);	// 設定是否正在往下移動
 		void SetMovingLeft(bool flag);	// 設定是否正在往左移動
 		void SetMovingRight(bool flag); // 設定是否正在往右移動
-		void SetXY(int nx, int ny);		// 設定擦子左上角座標
+		void SetXY(int nx, int ny);		// 設定腳色左上角座標
 		int GetX();
 		int GetY();
 		bool MoveStepCheck(int mx,int my);
+		bool isOnPortal();
 		void OnShow();
 		~CGameCharacter();
 	private:
 		string name;
 		CMovingBitmap characterBMP[10];
 		int map[800][800];          // 角色的地圖系統
-		void MapInit();
 		int x, y, c_num;			// 角色左上角座標
 		bool isMovingDown;			// 是否正在往下移動
 		bool isMovingLeft;			// 是否正在往左移動
@@ -160,9 +124,12 @@ namespace game_framework {
 		void SetXY(int nx, int ny);		// 設定擦子左上角座標
 		int GetX();
 		int GetY();
+		int GetNowMapNum();
+		void SetCharacterMap(CGameCharacter*character);
 		void OnShow();
 		int GetMoveType();
 		void Portal(CGameCharacter*character);
+		void Mesg(CGameCharacter*character);
 	private:
 		CMovingBitmap NowMap[10];
 		int map[10][800][800];		// 包含10張地圖的座標資訊 座標系統可容納4000x4000像素地圖 1格=5x5像素
@@ -193,11 +160,6 @@ namespace game_framework {
 		void OnMove();									// 移動遊戲元素
 		void OnShow();									// 顯示這個狀態的遊戲畫面
 	private:
-		///////////////////////////
-		Cpratice c_pratice;
-		CGameMapp gamemap;
-		///////////////////////////
-
 		CGameMap *map;
 		CGameCharacter *frisk;
 
