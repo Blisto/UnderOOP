@@ -121,18 +121,23 @@ namespace game_framework {
 	public:
 		CGameCharacter(string _name,int C_NUM);
 		void LoadBitmap();
-		void OnMove();					// 移動角色
+		void OnMove(int mx, int my);					// 移動角色
 		void SetMovingUp(bool flag);	// 設定是否正在往上移動
 		void SetMovingDown(bool flag);	// 設定是否正在往下移動
 		void SetMovingLeft(bool flag);	// 設定是否正在往左移動
 		void SetMovingRight(bool flag); // 設定是否正在往右移動
 		void SetXY(int nx, int ny);		// 設定擦子左上角座標
+		int GetX();
+		int GetY();
+		bool MoveStepCheck(int mx,int my);
 		void OnShow();
 		~CGameCharacter();
 	private:
 		string name;
 		CMovingBitmap characterBMP[10];
-		int x, y, c_num;					// 角色左上角座標
+		int map[800][800];          // 角色的地圖系統
+		void MapInit();
+		int x, y, c_num;			// 角色左上角座標
 		bool isMovingDown;			// 是否正在往下移動
 		bool isMovingLeft;			// 是否正在往左移動
 		bool isMovingRight;			// 是否正在往右移動
@@ -146,16 +151,23 @@ namespace game_framework {
 	public:
 		CGameMap();
 		void LoadBitmap();
-		void OnMove();
+		void OnMove(CGameCharacter*character);
+		bool MoveStepCheck(CGameCharacter*character);
 		void SetMovingUp(bool flag);	// 設定是否正在往上移動
 		void SetMovingDown(bool flag);	// 設定是否正在往下移動
 		void SetMovingLeft(bool flag);	// 設定是否正在往左移動
 		void SetMovingRight(bool flag); // 設定是否正在往右移動
 		void SetXY(int nx, int ny);		// 設定擦子左上角座標
+		int GetX();
+		int GetY();
 		void OnShow();
+		int GetMoveType();
+		void Portal(CGameCharacter*character);
 	private:
 		CMovingBitmap NowMap[10];
-		int x, y, nowMap_num;					// 地圖左上角座標
+		int map[10][800][800];		// 包含10張地圖的座標資訊 座標系統可容納4000x4000像素地圖 1格=5x5像素
+		void MapInit();             // 初始化地圖資訊
+		int x, y, nowMap_num, xyMode;		// 地圖左上角座標,當前地圖,地圖XY軸模式
 		bool isMovingDown;			// 是否正在往下移動
 		bool isMovingLeft;			// 是否正在往左移動
 		bool isMovingRight;			// 是否正在往右移動
@@ -186,7 +198,7 @@ namespace game_framework {
 		CGameMapp gamemap;
 		///////////////////////////
 
-		CGameMap map;
+		CGameMap *map;
 		CGameCharacter *frisk;
 
 		const int		NUMBALLS;	// 球的總數

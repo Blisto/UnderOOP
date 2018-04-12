@@ -333,8 +333,10 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
+    <Image Include="Bitmaps\000.bmp" />
     <Image Include="Bitmaps\001.bmp" />
     <Image Include="Bitmaps\002.bmp" />
+    <Image Include="Bitmaps\003.bmp" />
     <Image Include="Bitmaps\blue.bmp" />
     <Image Include="Bitmaps\frisk.bmp" />
     <Image Include="Bitmaps\green.bmp" />

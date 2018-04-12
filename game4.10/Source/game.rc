@@ -118,6 +118,10 @@ IDB_C                   BITMAP                  "C:\\Users\\User\\Desktop\\Under
 
 IDB_CHARACTER001        BITMAP                  "C:\\Users\\User\\Desktop\\Undertale-UnderOOP-\\game4.10\\Bitmaps\\frisk.bmp"
 
+IDB_MAP003              BITMAP                  "C:\\Users\\User\\Desktop\\Undertale-UnderOOP-\\game4.10\\Bitmaps\\003.bmp"
+
+IDB_MAP000              BITMAP                  "C:\\Users\\User\\Desktop\\Undertale-UnderOOP-\\game4.10\\Bitmaps\\000.bmp"
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
