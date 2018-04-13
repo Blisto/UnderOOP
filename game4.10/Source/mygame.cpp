@@ -297,10 +297,10 @@ namespace game_framework {
 
 
 
-	CGameCharacter::CGameCharacter(string _name,int C_NUM)
+	CGameCharacter::CGameCharacter(string _name)
 	{
 		this->name =_name;
-		this->c_num = C_NUM;
+		this->c_num = 0;
 		isMovingDown = isMovingUp = isMovingLeft = isMovingRight = false;
 		this->SetXY(0, 0);
 
@@ -322,7 +322,32 @@ namespace game_framework {
 	}
 	void CGameCharacter::LoadBitmap() 
 	{
-		characterBMP[1].LoadBitmap(IDB_CHARACTER001,RGB(255,255,255));
+		characterBMP[1].LoadBitmap(IDB_CHARACTER001, RGB(255, 255, 255));
+		characterBMP[2].LoadBitmap(IDB_CHARACTER002, RGB(255, 255, 255));
+		characterBMP[3].LoadBitmap(IDB_CHARACTER003, RGB(255, 255, 255));
+		characterBMP[4].LoadBitmap(IDB_CHARACTER004, RGB(255, 255, 255));
+
+		animation[0] = new CAnimation;
+		animation[0]->AddBitmap(IDB_CHARACTER001, RGB(255, 255, 255));
+		animation[1] = new CAnimation;
+		animation[1]->AddBitmap(IDB_CHARACTER002, RGB(255, 255, 255));
+		animation[2] = new CAnimation;
+		animation[2]->AddBitmap(IDB_CHARACTER003, RGB(255, 255, 255));
+		animation[3] = new CAnimation;
+		animation[3]->AddBitmap(IDB_CHARACTER004, RGB(255, 255, 255));
+		animation[4] = new CAnimation;
+		animation[4]->AddBitmap(IDB_CHARACTER001_M1, RGB(255, 255, 255));
+		animation[4]->AddBitmap(IDB_CHARACTER001_M2, RGB(255, 255, 255));
+		animation[5] = new CAnimation;
+		animation[5]->AddBitmap(IDB_CHARACTER002, RGB(255, 255, 255));
+		animation[5]->AddBitmap(IDB_CHARACTER002_M, RGB(255, 255, 255));
+		animation[6] = new CAnimation;
+		animation[6]->AddBitmap(IDB_CHARACTER003_M1, RGB(255, 255, 255));
+		animation[6]->AddBitmap(IDB_CHARACTER003_M2, RGB(255, 255, 255));
+		animation[7] = new CAnimation;
+		animation[7]->AddBitmap(IDB_CHARACTER004, RGB(255, 255, 255));
+		animation[7]->AddBitmap(IDB_CHARACTER004_M, RGB(255, 255, 255));
+
 	}
 	void CGameCharacter::OnMove(int mx, int my)
 	{
@@ -331,7 +356,7 @@ namespace game_framework {
 			return;
 		}
 		const int STEP_SIZE = 1;
-
+		animation[c_num]->OnMove();
 		if (isMovingLeft)
 			x -= STEP_SIZE;
 		if (isMovingRight)
@@ -373,14 +398,18 @@ namespace game_framework {
 	{
 		x = nx; y = ny;
 	}
+	void CGameCharacter::SetToword(int key) 
+	{
+		c_num = key;
+	}
 	int CGameCharacter::GetX()
 	{
-		return ((SIZE_X / 2) - (characterBMP[c_num].Width() / 2) + (x * 5))/5;
+		return ((SIZE_X / 2) - (animation[c_num]->Width() / 2) + (x * 5))/5;
 		//return x;
 	}
 	int CGameCharacter::GetY()
 	{
-		return ((SIZE_Y / 2) - (characterBMP[c_num].Height() / 2) + (y * 5))/5;
+		return ((SIZE_Y / 2) - (animation[c_num]->Height() / 2) + (y * 5))/5;
 		//return y;
 	}
 	bool CGameCharacter::MoveStepCheck(int mx,int my)
@@ -403,11 +432,15 @@ namespace game_framework {
 	}
 	void CGameCharacter::OnShow() 
 	{
-		characterBMP[c_num].SetTopLeft((SIZE_X/2)-(characterBMP[c_num].Width()/2)+(x*5), (SIZE_Y/2)-(characterBMP[c_num].Height()/2)+(y * 5));
-		characterBMP[c_num].ShowBitmap();
+		//characterBMP[c_num].SetTopLeft((SIZE_X/2)-(characterBMP[c_num].Width()/2)+(x*5), (SIZE_Y/2)-(characterBMP[c_num].Height()/2)+(y * 5));
+		//characterBMP[c_num].ShowBitmap();
+		animation[c_num]->SetTopLeft((SIZE_X / 2) - (animation[c_num]->Width() / 2) + (x * 5), (SIZE_Y / 2) - (animation[c_num]->Height() / 2) + (y * 5));
+		animation[c_num]->OnShow();
+
 	}
 	CGameCharacter::~CGameCharacter()
 	{
+		
 	}
 
 
@@ -544,7 +577,7 @@ CGameStateRun::CGameStateRun(CGame *g)
 : CGameState(g), NUMBALLS(28)
 {
 	ball = new CBall [NUMBALLS];
-	frisk = new CGameCharacter("Frisk",1);
+	frisk = new CGameCharacter("Frisk");
 	flowey = new CNonPlayerCharacter("Flowey");//NPC:Flowey
 	map = new CGameMap();
 }
@@ -648,16 +681,19 @@ void CGameStateRun::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	{
 		//frisk->SetMovingLeft(true);
 		map->SetMovingRight(true);//人物Y軸
+		frisk->SetToword(7);
 		if (map->GetNowMapNum() == 2)flowey->SetMovingRight(true);
 	}
 	if (nChar == KEY_RIGHT)
 	{
 		//frisk->SetMovingRight(true);
 		map->SetMovingLeft(true);//人物Y軸
+		frisk->SetToword(5);
 		if (map->GetNowMapNum() == 2)flowey->SetMovingLeft(true);
 	}
 	if (nChar == KEY_UP)
 	{
+		frisk->SetToword(6);
 		//frisk->SetMovingUp(true);
 		if (frisk->GetY() > 6)
 		{
@@ -672,6 +708,7 @@ void CGameStateRun::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	if (nChar == KEY_DOWN)
 	{
 		//frisk->SetMovingDown(true);
+		frisk->SetToword(4);
 		if (frisk->GetY() < 84)
 		{
 			frisk->SetMovingDown(true);
@@ -695,6 +732,7 @@ void CGameStateRun::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 		//frisk->SetMovingLeft(false);
 		map->SetMovingRight(false);
 		flowey->SetMovingRight(false);
+		frisk->SetToword(3);
 		map->Portal(frisk);
 	}
 	if (nChar == KEY_RIGHT)
@@ -702,6 +740,7 @@ void CGameStateRun::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 		//frisk->SetMovingRight(false);
 		map->SetMovingLeft(false);
 		flowey->SetMovingLeft(false);
+		frisk->SetToword(1);
 		map->Portal(frisk);
 	}
 	if (nChar == KEY_UP)
@@ -709,6 +748,7 @@ void CGameStateRun::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 		frisk->SetMovingUp(false);
 		map->SetMovingDown(false);
 		flowey->SetMovingDown(false);
+		frisk->SetToword(2);
 		map->Portal(frisk);
 	}
 	if (nChar == KEY_DOWN)
@@ -716,6 +756,7 @@ void CGameStateRun::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 		frisk->SetMovingDown(false);
 		map->SetMovingUp(false);
 		flowey->SetMovingUp(false);
+		frisk->SetToword(0);
 		map->Portal(frisk);
 	}
 }

@@ -83,7 +83,7 @@ namespace game_framework {
 	class CGameCharacter 
 	{
 	public:
-		CGameCharacter(string _name,int C_NUM);
+		CGameCharacter(string _name);
 		void LoadBitmap();
 		void SetMapInfo(int mapInfo[800][800]);
 		void OnMove(int mx, int my);	// 移動角色
@@ -92,6 +92,7 @@ namespace game_framework {
 		void SetMovingLeft(bool flag);	// 設定是否正在往左移動
 		void SetMovingRight(bool flag); // 設定是否正在往右移動
 		void SetXY(int nx, int ny);		// 設定腳色左上角座標
+		void SetToword(int key);// 方向鍵 1:下 2:右 3:上 4:左
 		int GetX();
 		int GetY();
 		bool MoveStepCheck(int mx,int my);
@@ -100,7 +101,8 @@ namespace game_framework {
 		~CGameCharacter();
 	private:
 		string name;
-		CAnimation animation;
+		//CAnimation animation;
+		CAnimation *animation[8];
 		CMovingBitmap characterBMP[10];
 		int map[800][800];          // 角色的地圖系統
 		int x, y, c_num;			// 角色左上角座標
