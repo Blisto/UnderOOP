@@ -22,7 +22,6 @@ namespace game_framework {
 	private:
 		string name;
 		CAnimation animation;
-		CMovingBitmap characterBMP[10];
 		int map[800][800];          // 角色的地圖系統
 		int x, y, c_num;			// 角色左上角座標
 		bool isMovingDown;			// 是否正在往下移動

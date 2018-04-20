@@ -93,6 +93,7 @@ namespace game_framework {
 		isMovingDown = isMovingUp = isMovingLeft = isMovingRight = false;
 		x = 39;
 		y = 0;
+	
 		for (int i = 0; i < 10; i++)
 		{
 			for (int j = 0; j < 800; j++) //初始化x軸
@@ -121,6 +122,11 @@ namespace game_framework {
 				if (i >= 40 && i <= 47 && j >= 47 && j <= 54)map[1][i][j] = 0;
 			}
 		}
+
+		map[1][22][19] = 2;
+		map[1][22][20] = 2;
+		map[1][23][19] = 2;
+		map[1][23][20] = 2;
 
 		for (int i = 0; i <= NowMap[2].Height() / 5; i++)
 		{
@@ -159,7 +165,7 @@ namespace game_framework {
 		NowMap[1].LoadBitmap(IDB_MAP001, RGB(255, 255, 255));
 		NowMap[2].LoadBitmap(IDB_MAP002, RGB(255, 255, 255));
 		NowMap[3].LoadBitmap(IDB_MAP003, RGB(255, 255, 255));
-
+		item.LoadBitmap();
 
 		this->MapInit();
 	}
@@ -183,6 +189,9 @@ namespace game_framework {
 			y -= STEP_SIZE;
 		if (isMovingDown)
 			y += STEP_SIZE;
+
+		item.Shift(character->GetY(), character->GetX(),this->y,this->x);
+
 	}
 	bool CGameMap::MoveStepCheck(CGameCharacter*character) 
 	{
@@ -234,6 +243,7 @@ namespace game_framework {
 		NowMap[nowMap_num].SetTopLeft((SIZE_X / 2) - (NowMap[nowMap_num].Width() / 2) + (x * 5), (SIZE_Y / 2) - (NowMap[nowMap_num].Height() / 2)+(y * 5));
 		//強制地圖置中 **必須依靠改變地圖左上座標進行初始化地圖位置的動作
 		NowMap[nowMap_num].ShowBitmap();
+		//item.OnShow();
 	}
 	void CGameMap::Mesg(CGameCharacter*character)
 	{
@@ -303,7 +313,7 @@ namespace game_framework {
 		this->c_num = 0;
 		isMovingDown = isMovingUp = isMovingLeft = isMovingRight = false;
 		this->SetXY(0, 0);
-
+		
 			for (int j = 0; j < 800; j++) //初始化x軸
 			{
 				for (int k = 0; k < 800; k++)map[j][k] = 0; // 初始化y軸 0為不可通過
@@ -347,7 +357,10 @@ namespace game_framework {
 		animation[7] = new CAnimation;
 		animation[7]->AddBitmap(IDB_CHARACTER004, RGB(255, 255, 255));
 		animation[7]->AddBitmap(IDB_CHARACTER004_M, RGB(255, 255, 255));
-
+		animation[4]->SetDelayCount(5);
+		animation[5]->SetDelayCount(5);
+		animation[6]->SetDelayCount(5);
+		animation[7]->SetDelayCount(5);
 	}
 	void CGameCharacter::OnMove(int mx, int my)
 	{
@@ -464,7 +477,7 @@ void CGameStateInit::OnInit()
 	//
 	// 開始載入資料
 	//
-	logo.LoadBitmap(IDB_BACKGROUND);
+	//logo.LoadBitmap(IDB_BACKGROUND);
 	Sleep(300);				// 放慢，以便看清楚進度，實際遊戲請刪除此Sleep
 	//
 	// 此OnInit動作會接到CGameStaterRun::OnInit()，所以進度還沒到100%
@@ -495,14 +508,14 @@ void CGameStateInit::OnShow()
 	//
 	// 貼上logo
 	//
-	logo.SetTopLeft((SIZE_X - logo.Width())/2, SIZE_Y/8);
-	logo.ShowBitmap();
+	//logo.SetTopLeft((SIZE_X - logo.Width())/2, SIZE_Y/8);
+	//logo.ShowBitmap();
 	//
 	// Demo螢幕字型的使用，不過開發時請盡量避免直接使用字型，改用CMovingBitmap比較好
 	//
 	CDC *pDC = CDDraw::GetBackCDC();			// 取得 Back Plain 的 CDC 
 	CFont f,*fp;
-	f.CreatePointFont(160,"Times New Roman");	// 產生 font f; 160表示16 point的字
+	f.CreatePointFont(110,"Times New Roman");	// 產生 font f; 160表示16 point的字
 	fp=pDC->SelectObject(&f);					// 選用 font f
 	pDC->SetBkColor(RGB(0,0,0));
 	pDC->SetTextColor(RGB(255,255,0));

@@ -144,6 +144,8 @@ IDB_CHARACTER003_M2     BITMAP                  "C:\\Users\\User\\Desktop\\Under
 
 IDB_CHARACTER004_M      BITMAP                  "C:\\Users\\User\\Desktop\\Undertale-UnderOOP-\\game4.10\\Bitmaps\\frisk9.bmp"
 
+IDB_BITMAP3             BITMAP                  "..\\res\\bitmap3.bmp"
+
 
 /////////////////////////////////////////////////////////////////////////////
 //

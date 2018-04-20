@@ -75,12 +75,12 @@ namespace game_framework {
 	}
 	int CNonPlayerCharacter::GetX()
 	{
-		return ((SIZE_X / 2) - (characterBMP[c_num].Width() / 2) + (x * 5)) / 5;
+		return ((SIZE_X / 2) - (animation.Width() / 2) + (x * 5)) / 5;
 		//return x;
 	}
 	int CNonPlayerCharacter::GetY()
 	{
-		return ((SIZE_Y / 2) - (characterBMP[c_num].Height() / 2) + (y * 5)) / 5;
+		return ((SIZE_Y / 2) - (animation.Height() / 2) + (y * 5)) / 5;
 		//return y;
 	}
 	bool CNonPlayerCharacter::MoveStepCheck(int mx, int my)

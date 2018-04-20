@@ -132,6 +132,9 @@
     <ClCompile Include="Source\CNonPlayerCharacter.cpp">
       <Filter>MyGame</Filter>
     </ClCompile>
+    <ClCompile Include="Source\CObject.cpp">
+      <Filter>MyGame</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\audio.h">
@@ -171,6 +174,9 @@
       <Filter>MyGame</Filter>
     </ClInclude>
     <ClInclude Include="Source\CNonPlayerCharacter.h">
+      <Filter>MyGame</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\CObject.h">
       <Filter>MyGame</Filter>
     </ClInclude>
   </ItemGroup>
@@ -241,6 +247,9 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="Bitmaps\frisk9.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\bitmap3.bmp">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
