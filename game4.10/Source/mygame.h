@@ -136,7 +136,7 @@ namespace game_framework {
 		void Mesg(CGameCharacter*character);
 	private:
 		CMovingBitmap NowMap[10];
-		CObject item;
+		CObject item[10][10];
 		int map[10][800][800];		// 包含10張地圖的座標資訊 座標系統可容納4000x4000像素地圖 1格=5x5像素
 		void MapInit();             // 初始化地圖資訊
 		int x, y, nowMap_num, xyMode;		// 地圖左上角座標,當前地圖,地圖XY軸模式

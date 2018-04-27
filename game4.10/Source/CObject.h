@@ -5,11 +5,10 @@ namespace game_framework {
 	{
 	public:
 		CObject();
-		void LoadBitmap();
-		void Shift(int cy,int cx ,int my, int mx);
-		void OnShow();
+		void LoadBitmap(int ny, int nx);
+		void OnShow(int mw,int mh, int my, int mx);
 	private:
-		CMovingBitmap test;
+		CMovingBitmap texture;
 		int x, y;
 	};
 

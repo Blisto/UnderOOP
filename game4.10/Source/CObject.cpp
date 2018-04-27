@@ -11,25 +11,19 @@ namespace game_framework {
 
 	CObject::CObject() 
 	{
-	
+
 	}
 
-	void CObject::LoadBitmap()
+	void CObject::LoadBitmap(int ny,int nx)
 	{
-		test.LoadBitmap(IDB_BITMAP3, RGB(255, 255, 255));
+		x = nx;
+		y = ny;
+		texture.LoadBitmap(IDB_BITMAP3, RGB(255, 255, 255));
 	}
 
-
-	void CObject::Shift(int cy, int cx, int my, int mx)
+	void CObject::OnShow(int mw, int mh,int my,int mx)
 	{
-		y = cy - my;
-		x = cx - mx;
-	}
-
-	void CObject::OnShow() 
-	{
-		test.SetTopLeft((SIZE_Y/2)-(test.Height()/2)+5*y, (SIZE_X / 2) - (test.Height() / 2)+5*x);
-		test.ShowBitmap();
-		
+		texture.SetTopLeft((SIZE_X/2)-(mw/2) + 5 * mx + 5 * x, (SIZE_Y / 2) - (mh / 2)+5*my+ 5 * y);
+		texture.ShowBitmap();
 	}
 }

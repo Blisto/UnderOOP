@@ -88,6 +88,7 @@ namespace game_framework {
 
 	CGameMap::CGameMap()
 	{
+
 		xyMode = 0;
 		nowMap_num = 1;
 		isMovingDown = isMovingUp = isMovingLeft = isMovingRight = false;
@@ -155,9 +156,6 @@ namespace game_framework {
 			}
 		}
 
-
-
-
 	}
 	void CGameMap::LoadBitmap()
 	{
@@ -165,8 +163,7 @@ namespace game_framework {
 		NowMap[1].LoadBitmap(IDB_MAP001, RGB(255, 255, 255));
 		NowMap[2].LoadBitmap(IDB_MAP002, RGB(255, 255, 255));
 		NowMap[3].LoadBitmap(IDB_MAP003, RGB(255, 255, 255));
-		item.LoadBitmap();
-
+		item[nowMap_num][1].LoadBitmap(22,19);
 		this->MapInit();
 	}
 	void CGameMap::SetCharacterMap(CGameCharacter*character) 
@@ -174,7 +171,7 @@ namespace game_framework {
 		character->SetMapInfo(map[nowMap_num]);
 	}
 	void CGameMap::OnMove(CGameCharacter*character)
-	{	
+	{
 		if (this->MoveStepCheck(character)==false)
 		{
 			return;
@@ -190,11 +187,10 @@ namespace game_framework {
 		if (isMovingDown)
 			y += STEP_SIZE;
 
-		item.Shift(character->GetY(), character->GetX(),this->y,this->x);
-
 	}
 	bool CGameMap::MoveStepCheck(CGameCharacter*character) 
 	{
+		int count = 0;
 		int mx = this->GetX(), my = this->GetY();
 		int cx = character->GetX(), cy = character->GetY();
 		int lr=0,ud=0;
@@ -202,8 +198,28 @@ namespace game_framework {
 		if (isMovingLeft == true)lr = 1;
 		if (isMovingUp == true)ud = 1;
 		if (isMovingDown == true)ud = -1;
-		if (ud == 0 && cy - my>=0 && cx - mx + lr>=0 && map[nowMap_num][cy - my][cx - mx+lr] == 1&& map[nowMap_num][cy - my+6][cx - mx + lr+4] == 1)return true;
-		if (lr == 0 && cx - mx>=0 && cy - my + ud>=0 && map[nowMap_num][cy - my + ud][cx - mx] == 1 && map[nowMap_num][cy - my + ud + 6][cx - mx + 4] == 1)return true;
+
+		if (ud == 0 && cy - my >= 0 && cx - mx + lr >= 0) 
+		{
+			for (int i = 0; i < 6; i++) 
+			{
+				for (int j = 0; j < 4; j++)
+				{
+					if (map[nowMap_num][cy - my + i][cx - mx + j + lr] == 1)count++;
+				}
+			}
+		}
+		else if (lr == 0 && cx - mx >= 0 && cy - my + ud >= 0) 
+		{
+			for (int i = 0; i < 6; i++)
+			{
+				for (int j = 0; j < 4; j++)
+				{
+					if (map[nowMap_num][cy - my + i+ud][cx - mx + j ] == 1)count++;
+				}
+			}
+		}
+		if (count == 24)return true;
 		return false;
 	}
 	void CGameMap::SetMovingUp(bool flag)
@@ -243,7 +259,7 @@ namespace game_framework {
 		NowMap[nowMap_num].SetTopLeft((SIZE_X / 2) - (NowMap[nowMap_num].Width() / 2) + (x * 5), (SIZE_Y / 2) - (NowMap[nowMap_num].Height() / 2)+(y * 5));
 		//強制地圖置中 **必須依靠改變地圖左上座標進行初始化地圖位置的動作
 		NowMap[nowMap_num].ShowBitmap();
-		//item.OnShow();
+		if(nowMap_num<=1)item[nowMap_num][1].OnShow(NowMap[nowMap_num].Width(), NowMap[nowMap_num].Height(),y,x);
 	}
 	void CGameMap::Mesg(CGameCharacter*character)
 	{
@@ -427,6 +443,7 @@ namespace game_framework {
 	}
 	bool CGameCharacter::MoveStepCheck(int mx,int my)
 	{
+		int count = 0;
 		int cx=this->GetX(), cy = this->GetY();
 		int lr=0,ud = 0;
 		if (isMovingRight == true)lr = 0;
@@ -434,9 +451,17 @@ namespace game_framework {
 		if (isMovingUp == true)ud = -1;
 		if (isMovingDown == true)ud = 1;
 
-		if (lr == 0 && cy - my + ud >= 0 && cx - mx>=0 && map[cy - my + ud][cx - mx  ] == 1 && map[cy - my + ud + 6][cx - mx + 4] == 1)return true;
-		//if (ud == 0 && cy - my >= 0 && cx - mx + lr >= 0 && map[cy - my][cx - mx + lr] == 1 && map[cy - my + 6][cx - mx + lr + 4] == 1)return true;
-
+		if (lr == 0 && cy - my + ud >= 0 && cx - mx >= 0)
+		{
+			for (int i = 0; i < 6; i++)
+			{
+				for (int j = 0; j < 4; j++)
+				{
+					if (map[cy - my + i +ud][cx - mx+j] == 1)count++;
+				}
+			}
+		}
+		if (count == 24)return true;
 		return false;
 	}
 	bool CGameCharacter::isOnPortal() 
@@ -445,8 +470,6 @@ namespace game_framework {
 	}
 	void CGameCharacter::OnShow() 
 	{
-		//characterBMP[c_num].SetTopLeft((SIZE_X/2)-(characterBMP[c_num].Width()/2)+(x*5), (SIZE_Y/2)-(characterBMP[c_num].Height()/2)+(y * 5));
-		//characterBMP[c_num].ShowBitmap();
 		animation[c_num]->SetTopLeft((SIZE_X / 2) - (animation[c_num]->Width() / 2) + (x * 5), (SIZE_Y / 2) - (animation[c_num]->Height() / 2) + (y * 5));
 		animation[c_num]->OnShow();
 
@@ -696,19 +719,17 @@ void CGameStateRun::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		map->SetMovingRight(true);//人物Y軸
 		frisk->SetToword(7);
 		if (map->GetNowMapNum() == 2)flowey->SetMovingRight(true);
-	}
-	if (nChar == KEY_RIGHT)
+	}else if (nChar == KEY_RIGHT)
 	{
 		//frisk->SetMovingRight(true);
 		map->SetMovingLeft(true);//人物Y軸
 		frisk->SetToword(5);
 		if (map->GetNowMapNum() == 2)flowey->SetMovingLeft(true);
-	}
-	if (nChar == KEY_UP)
+	}else if (nChar == KEY_UP)
 	{
 		frisk->SetToword(6);
 		//frisk->SetMovingUp(true);
-		if (frisk->GetY() > 6)
+		if (frisk->GetY() >= 6)
 		{
 			frisk->SetMovingUp(true);
 		}
@@ -717,12 +738,11 @@ void CGameStateRun::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			map->SetMovingDown(true);
 			if (map->GetNowMapNum() == 2)flowey->SetMovingDown(true);
 		}
-	}
-	if (nChar == KEY_DOWN)
+	}else if (nChar == KEY_DOWN)
 	{
 		//frisk->SetMovingDown(true);
 		frisk->SetToword(4);
-		if (frisk->GetY() < 84)
+		if (frisk->GetY() <= 84)
 		{
 			frisk->SetMovingDown(true);
 		}
@@ -824,9 +844,8 @@ void CGameStateRun::OnShow()
 	
 
 	map->Mesg(frisk);
-	frisk->OnShow();
 	flowey->OnShow((map->GetNowMapNum()));
-
+	frisk->OnShow();
 
 
 /////////////////////////////////////////////////////////////////////////////
